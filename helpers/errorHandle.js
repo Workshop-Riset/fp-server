@@ -1,7 +1,7 @@
 function errHandler(err, req, res, next) {
   let code = 500;
   let message = "Internal Server Error";
-  console.log(err.name);
+  console.log(err);
   if (
     err.name === "RequiredInput" ||
     err.name === "EmailFormat" ||
@@ -26,6 +26,9 @@ function errHandler(err, req, res, next) {
       message = "Invalid username/password";
     }
     message = err.message;
+  } else if(err.name === "NotAuth"){
+    code = 403
+    message = 'You are not authorized'
   }
   res.status(code).json({ message });
 }
