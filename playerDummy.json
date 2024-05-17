@@ -1,0 +1,73 @@
+[
+    {
+      "id": 1,
+      "name": "John Doe",
+      "username": "johndoe",
+      "telephoneNumber": "08123456789",
+      "email": "johndoe@example.com",
+      "password": "123456",
+      "photo": "https://example.com/photos/johndoe.jpg",
+      "location": "Jl. Pahlawan No.1, Surabaya",
+      "description": "User John Doe",
+      "point": 85,
+      "role": "User",
+      "city": "Surabaya"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith",
+      "username": "janesmith",
+      "telephoneNumber": "08129876543",
+      "email": "janesmith@example.com",
+      "password": "123456",
+      "photo": "https://example.com/photos/janesmith.jpg",
+      "location": "Jl. Pemuda No.2, Surabaya",
+      "description": "User Jane Smith",
+      "point": 92,
+      "role": "User",
+      "city": "Surabaya"
+    },
+    {
+      "id": 3,
+      "name": "Alice Johnson",
+      "username": "alicejohnson",
+      "telephoneNumber": "08127654321",
+      "email": "alicejohnson@example.com",
+      "password": "123456",
+      "photo": "https://example.com/photos/alicejohnson.jpg",
+      "location": "Jl. Tunjungan No.3, Surabaya",
+      "description": "User Alice Johnson",
+      "point": 78,
+      "role": "User",
+      "city": "Surabaya"
+    },
+    {
+      "id": 4,
+      "name": "Bob Brown",
+      "username": "bobbrown",
+      "telephoneNumber": "08123456788",
+      "email": "bobbrown@example.com",
+      "password": "123456",
+      "photo": "https://example.com/photos/bobbrown.jpg",
+      "location": "Jl. Kayoon No.4, Surabaya",
+      "description": "User Bob Brown",
+      "point": 67,
+      "role": "User",
+      "city": "Surabaya"
+    },
+    {
+      "id": 5,
+      "name": "Charlie Green",
+      "username": "charliegreen",
+      "telephoneNumber": "08123456787",
+      "email": "charliegreen@example.com",
+      "password": "123456",
+      "photo": "https://example.com/photos/charliegreen.jpg",
+      "location": "Jl. Basuki Rahmat No.5, Surabaya",
+      "description": "User Charlie Green",
+      "point": 59,
+      "role": "User",
+      "city": "Surabaya"
+    }
+  ]
+  
