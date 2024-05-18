@@ -19,7 +19,7 @@ class MissionController {
   }
   static async assignMission(req, res, next) {
     //PR:
-    // 1. bikin mission dulu baru push ke user
+    // v1. bikin mission dulu baru push ke user
     // 2. filter dulu missiontemplate yg type-nya "Self"
     // 3. (sunnah) set ongoingmission yg self ke gagal
     try {
@@ -115,27 +115,45 @@ class MissionController {
             break;
         }
       }
+      // connect to db collection Mission
+      const dbMissions = async () => {
+        const db = await runDb();
+        return db.collection("Missions");
+      };
+      const missionsCollection = await dbMissions();
 
       // assign each user group level to each of its own preference by probability
       let userMissionType;
       let rand;
+
       for (let i = 0; i < userEarly.length; i++) {
         // see which category user preference
         userMissionType = byPreference(userEarly[i].category);
-        // randoming index inside the user category preference
 
+        // randoming index inside the user category preference
         rand = Math.floor(
           Math.random() * finalMissionEarly[userMissionType].length
         );
         const missionId = finalMissionEarly[userMissionType][rand]._id;
-        const filter = { _id: userEarly[i]._id };
-        const pushOperation = {
-          $push: { onGoingMissionId: missionId },
+
+        // create missions
+        const inputData = {
+          status: "onGoing",
+          missionId,
+          userId: userEarly[i]._id,
+          vote: 0,
         };
-        const pushOnGoingMissionId = await userCollection.updateOne(
-          filter,
-          pushOperation
-        );
+        const insertedMission = await missionsCollection.insertOne(inputData);
+
+        // // (past) push missionId to Users.onGoingMissionId
+        // const filter = { _id: userEarly[i]._id };
+        // const pushOperation = {
+        //   $push: { onGoingMissionId: missionId },
+        // };
+        // const pushOnGoingMissionId = await userCollection.updateOne(
+        //   filter,
+        //   pushOperation
+        // );
       }
       for (let i = 0; i < userMid.length; i++) {
         // see which category user preference
@@ -146,14 +164,24 @@ class MissionController {
         );
 
         const missionId = finalMissionMid[userMissionType][rand]._id;
-        const filter = { _id: userMid[i]._id };
-        const pushOperation = {
-          $push: { onGoingMissionId: missionId },
+
+        // create missions
+        const inputData = {
+          status: "onGoing",
+          missionId,
+          userId: userMid[i]._id,
+          vote: 0,
         };
-        const pushOnGoingMissionId = await userCollection.updateOne(
-          filter,
-          pushOperation
-        );
+        const insertedMission = await missionsCollection.insertOne(inputData);
+
+        // const filter = { _id: userMid[i]._id };
+        // const pushOperation = {
+        //   $push: { onGoingMissionId: missionId },
+        // };
+        // const pushOnGoingMissionId = await userCollection.updateOne(
+        //   filter,
+        //   pushOperation
+        // );
       }
       for (let i = 0; i < userExp.length; i++) {
         // see which category user preference
@@ -164,14 +192,24 @@ class MissionController {
         );
 
         const missionId = finalMissionExp[userMissionType][rand]._id;
-        const filter = { _id: userExp[i]._id };
-        const pushOperation = {
-          $push: { onGoingMissionId: missionId },
+
+        // create missions
+        const inputData = {
+          status: "onGoing",
+          missionId,
+          userId: userExp[i]._id,
+          vote: 0,
         };
-        const pushOnGoingMissionId = await userCollection.updateOne(
-          filter,
-          pushOperation
-        );
+        const insertedMission = await missionsCollection.insertOne(inputData);
+
+        // const filter = { _id: userExp[i]._id };
+        // const pushOperation = {
+        //   $push: { onGoingMissionId: missionId },
+        // };
+        // const pushOnGoingMissionId = await userCollection.updateOne(
+        //   filter,
+        //   pushOperation
+        // );
       }
 
       res.status(200).json({ message: "all done gan" });
