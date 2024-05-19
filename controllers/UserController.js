@@ -42,7 +42,8 @@ class UserController {
 
   static async register(req, res, next) {
     try {
-      const { name, email, phoneNumber, username, password } = req.body;
+      const { name, email, phoneNumber, username, password, category } =
+        req.body;
       const inputData = {
         name,
         email,
@@ -53,6 +54,7 @@ class UserController {
         point: 0,
         role: "User",
         location: "Surabaya",
+        category,
       };
       // console.log(phoneNumber, '<<<<');
       // if (typeof phoneNumber === "string") {
@@ -94,6 +96,7 @@ class UserController {
           location: "Surabaya",
           photo: "",
           point: 0,
+          category: inputData.category,
         },
       });
     } catch (error) {
