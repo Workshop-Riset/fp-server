@@ -241,6 +241,7 @@ class MissionController {
         await updatePoint(finderMission.point, findUser._id);
       }
       res.status(200).json({ message: `Mission ${status} successfully` });
+      
     } catch (error) {
       next(error);
     }
