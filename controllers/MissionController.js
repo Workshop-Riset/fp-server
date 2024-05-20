@@ -18,6 +18,11 @@ const dbUser = async () => {
   return db.collection("Missions");
 };
 
+const dbMission = async () => {
+  const db = await runDb();
+  return db.collection("Missions-Template");
+};
+
 class MissionController {
   static async getMission(req, res, next) {
     try {
@@ -148,12 +153,18 @@ class MissionController {
 
   static async MissionDetail(req, res, next) {
     try {
-      const { missionId } = req.params;
+      const { _id } = req.user;
       const missionCollection = await dbUser();
+
       const agg = [
         {
           $match: {
-            _id: new ObjectId(missionId),
+            userId: new ObjectId("66463c59edc93d7c3e96b61d"),
+          },
+        },
+        {
+          $match: {
+            status: "onGoing",
           },
         },
         {
@@ -170,10 +181,11 @@ class MissionController {
           },
         },
       ];
+
       const cursor = await missionCollection.aggregate(agg).toArray();
       res.status(200).json(cursor);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching mission details:", error);
       next(error);
     }
   }
@@ -243,6 +255,67 @@ class MissionController {
         await updatePoint(finderMission.point, findUser._id);
       }
       res.status(200).json({ message: `Mission ${status} successfully` });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async pushSocialMission(req, res, next) {
+    try {
+      const { missionId } = req.params;
+      const { _id, username } = req.user;
+      const missionTemplate = await dbMission();
+      const mission = await dbUser();
+      const searchMission = await searchTemplateMission(missionId);
+      if (!searchMission) {
+        return res.status(404).json({ message: "Mission not found" });
+      }
+
+      if (searchMission.type !== "Social") {
+        return res.status(400).json({ message: "Only social mission!!" });
+      }
+      let participantExists;
+      if (searchMission.participants) {
+        if (searchMission.participants.length === 5) {
+          return res.status(400).json({ message: "This mission has 5 people" });
+        }
+        participantExists = searchMission.participants.some(
+          (participant) => String(participant.userId) === String(_id)
+        );
+      }
+
+      if (participantExists) {
+        return res
+          .status(400)
+          .json({ message: "You have already taken the mission" });
+      }
+
+      const insert = {
+        userId: new ObjectId(_id),
+        username,
+      };
+
+      const filter = { _id: new ObjectId(missionId) };
+      const update =
+        !searchMission.participants || searchMission.participants.length === 0
+          ? { $set: { participants: [insert] } }
+          : { $push: { participants: insert } };
+
+      // Update mission template
+      await missionTemplate.updateOne(filter, update);
+
+      // Insert user mission
+      await mission.insertOne({
+        userId: new ObjectId(_id),
+        missionId: new ObjectId(searchMission._id),
+        status: "onGoing",
+        photo: "",
+        vote: 0,
+      });
+
+      res.status(200).json({
+        message: "User added to mission participants successfully",
+      });
     } catch (error) {
       next(error);
     }

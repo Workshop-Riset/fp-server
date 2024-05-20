@@ -10,7 +10,7 @@ const upload = multer({ storage: storage });
 routes.get("/", MissionController.getMission);
 routes.post("/assign", MissionController.assignMission);
 
-routes.get("/:missionId", MissionController.MissionDetail);
+routes.get("/my-mission", authorization, MissionController.MissionDetail);
 routes.post(
   "/:missionId",
   authorization,
