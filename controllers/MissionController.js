@@ -66,15 +66,10 @@ class MissionController {
         return db.collection("Missions-Template");
       };
       const missionCollection = await dbMissionTemplate();
-<<<<<<< HEAD
-      const findMission = await missionCollection.find().toArray();
-
-=======
       const findMission = await missionCollection
         .find({ type: "Self" })
         .toArray();
       let missionMinLv;
->>>>>>> 2e270d0 (fix: only add self type mission to user)
       let missionEarly = [];
       let missionMid = [];
       let missionExp = [];
@@ -248,7 +243,6 @@ class MissionController {
         await updatePoint(finderMission.point, findUser._id);
       }
       res.status(200).json({ message: `Mission ${status} successfully` });
-      
     } catch (error) {
       next(error);
     }
