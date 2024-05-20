@@ -23,4 +23,5 @@ routes.patch(
   onlyAdmin,
   MissionController.acceptMissionByAdmin
 );
+routes.get("/:idMission", MissionController.detailMission);
 module.exports = routes;
