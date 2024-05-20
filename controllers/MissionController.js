@@ -66,8 +66,10 @@ class MissionController {
         return db.collection("Missions-Template");
       };
       const missionCollection = await dbMissionTemplate();
-      const findMission = await missionCollection.find().toArray();
-
+      const findMission = await missionCollection
+        .find({ type: "Self" })
+        .toArray();
+      let missionMinLv;
       let missionEarly = [];
       let missionMid = [];
       let missionExp = [];
@@ -241,7 +243,6 @@ class MissionController {
         await updatePoint(finderMission.point, findUser._id);
       }
       res.status(200).json({ message: `Mission ${status} successfully` });
-      
     } catch (error) {
       next(error);
     }
