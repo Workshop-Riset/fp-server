@@ -17,4 +17,17 @@ async function findIdUser(_id) {
   return findId;
 }
 
-module.exports = { findUsername, findIdUser };
+async function updatePoint(point, id) {
+  const userCollection = await dbUser();
+  console.log(id, '<<<<');
+  const filter = { _id: new ObjectId(id) };
+  const update = {
+    $inc: { point: parseInt(point) },
+  };
+
+  const result = await userCollection.updateOne(filter, update);
+  console.log(result, '<<<');
+  return result;
+}
+
+module.exports = { findUsername, findIdUser, updatePoint };

@@ -107,18 +107,16 @@ class UserController {
   static async login(req, res, next) {
     try {
       const { username, password } = req.body;
-      // console.log(username , password , '<<<< - ');
-      if (!username) {
+      if (!username || username === "") {
         throw { name: "RequiredInput", type: "username" };
       }
-      if (!password) {
+      if (!password || password === "") {
         throw { name: "RequiredInput", type: "password" };
       }
       const finderUsername = await findUsername(username);
       if (!finderUsername) {
         throw { name: "InvAuth" };
       }
-      // console.log(finderUsername.password, '<<<<< finder boss');
       const verification = verifPass(password, finderUsername.password);
       if (!verification) {
         throw { name: "InvAuth" };
@@ -139,10 +137,215 @@ class UserController {
   static async myProfile(req, res, next) {
     try {
       const { _id } = req.user;
-      let findMyProfile = await findIdUser(_id);
-      delete findMyProfile.password;
-      delete findMyProfile.role;
-      res.status(200).json(findMyProfile);
+      console.log(_id, '<<< id');
+      const userCollection = await dbUser();
+      const agg = [
+        {
+          $match: {
+            _id: new ObjectId(_id),
+          },
+        },
+        {
+          $lookup: {
+            from: "Missions",
+            localField: "_id",
+            foreignField: "userId",
+            as: "Mission",
+          },
+        },
+        {
+          $unwind: {
+            path: "$Mission",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $group: {
+            _id: "$_id",
+            userId: {
+              $first: "$_id",
+            },
+            name: {
+              $first: "$name",
+            },
+            email: {
+              $first: "$email",
+            },
+            phoneNumber: {
+              $first: "$phoneNumber",
+            },
+            username: {
+              $first: "$username",
+            },
+            password: {
+              $first: "$password",
+            },
+            photo: {
+              $first: "$photo",
+            },
+            point: {
+              $first: "$point",
+            },
+            role: {
+              $first: "$role",
+            },
+            location: {
+              $first: "$location",
+            },
+            description: {
+              $first: "$description",
+            },
+            thumbnail: {
+              $first: "$thumbnail",
+            },
+            category: {
+              $first: "$category",
+            },
+            onGoingMissions: {
+              $push: {
+                $cond: {
+                  if: {
+                    $eq: ["$Mission.status", "onGoing"],
+                  },
+                  then: "$Mission",
+                  else: null,
+                },
+              },
+            },
+            finishedMissions: {
+              $push: {
+                $cond: {
+                  if: {
+                    $eq: ["$Mission.status", "finished"],
+                  },
+                  then: "$Mission",
+                  else: null,
+                },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            onGoingMissions: {
+              $filter: {
+                input: "$onGoingMissions",
+                as: "mission",
+                cond: {
+                  $ne: ["$$mission", null],
+                },
+              },
+            },
+            finishedMissions: {
+              $filter: {
+                input: "$finishedMissions",
+                as: "mission",
+                cond: {
+                  $ne: ["$$mission", null],
+                },
+              },
+            },
+            userId: 1,
+            name: 1,
+            email: 1,
+            phoneNumber: 1,
+            username: 1,
+            password: 1,
+            photo: 1,
+            point: 1,
+            role: 1,
+            location: 1,
+            description: 1,
+            thumbnail: 1,
+            category: 1,
+          },
+        },
+        {
+          $unwind: {
+            path: "$onGoingMissions",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $unwind: {
+            path: "$finishedMissions",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "Missions-Template",
+            localField: "onGoingMissions.missionId",
+            foreignField: "_id",
+            as: "onGoingMissions.Details",
+          },
+        },
+        {
+          $lookup: {
+            from: "Missions-Template",
+            localField: "finishedMissions.missionId",
+            foreignField: "_id",
+            as: "finishedMissions.Details",
+          },
+        },
+        {
+          $group: {
+            _id: "$_id",
+            userId: {
+              $first: "$userId",
+            },
+            name: {
+              $first: "$name",
+            },
+            email: {
+              $first: "$email",
+            },
+            phoneNumber: {
+              $first: "$phoneNumber",
+            },
+            username: {
+              $first: "$username",
+            },
+            password: {
+              $first: "$password",
+            },
+            photo: {
+              $first: "$photo",
+            },
+            point: {
+              $first: "$point",
+            },
+            role: {
+              $first: "$role",
+            },
+            location: {
+              $first: "$location",
+            },
+            description: {
+              $first: "$description",
+            },
+            thumbnail: {
+              $first: "$thumbnail",
+            },
+            category: {
+              $first: "$category",
+            },
+            onGoingMissions: {
+              $addToSet: "$onGoingMissions",
+            },
+            finishedMissions: {
+              $addToSet: "$finishedMissions",
+            },
+          },
+        },
+      ];
+      const cursor = await userCollection.aggregate(agg).toArray();
+      const userProfile = cursor[0];
+
+      if (userProfile) {
+        delete userProfile.role;
+        res.status(200).json(userProfile);
+      }
     } catch (error) {
       next(error);
     }

@@ -14,6 +14,7 @@ async function authorization(req, res, next) {
       throw { name: "AuthToken", message: "Invalid Token", type: "Inv" };
     }
     req.user = decode;
+    console.log(req.user, '<<<<');
     next();
   } catch (error) {
     console.log(error);

@@ -20,6 +20,7 @@ function errHandler(err, req, res, next) {
     if (err.name === "UniqueInput") {
       message = `${err.type} is unique`;
     }
+    message = `${err.type} is required`
   } else if (err.name === "InvAuth" || err.name === "AuthToken") {
     code = 401;
     if (!err.type) {
