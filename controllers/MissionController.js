@@ -159,7 +159,7 @@ class MissionController {
       const agg = [
         {
           $match: {
-            userId: new ObjectId("66463c59edc93d7c3e96b61d"),
+            userId: new ObjectId(_id),
           },
         },
         {
@@ -321,16 +321,16 @@ class MissionController {
     }
   }
 
-  static async detailMission(req, res, next){
+  static async detailMission(req, res, next) {
     try {
-      const {idMission} = req.params
-      const detailMission = await searchTemplateMission(idMission)
-      if(!detailMission){
-        return res.status(404).json({message : 'Mission cant found'})
+      const { idMission } = req.params;
+      const detailMission = await searchTemplateMission(idMission);
+      if (!detailMission) {
+        return res.status(404).json({ message: "Mission cant found" });
       }
-      res.status(200).json(detailMission)
+      res.status(200).json(detailMission);
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 }
