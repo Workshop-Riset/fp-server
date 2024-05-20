@@ -320,6 +320,19 @@ class MissionController {
       next(error);
     }
   }
+
+  static async detailMission(req, res, next){
+    try {
+      const {idMission} = req.params
+      const detailMission = await searchTemplateMission(idMission)
+      if(!detailMission){
+        return res.status(404).json({message : 'Mission cant found'})
+      }
+      res.status(200).json(detailMission)
+    } catch (error) {
+      next(error)
+    }
+  }
 }
 
 module.exports = MissionController;
