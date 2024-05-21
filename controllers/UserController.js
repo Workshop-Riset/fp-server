@@ -127,7 +127,7 @@ class UserController {
         role: finderUsername.role,
       };
       const access_token = signToken(payload);
-      res.status(200).json({ access_token });
+      res.status(200).json({ access_token, role: finderUsername.role });
     } catch (error) {
       console.log(error);
       next(error);
