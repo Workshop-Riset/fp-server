@@ -156,6 +156,8 @@ class MissionController {
       const { _id } = req.user;
       const missionCollection = await dbUser();
 
+      console.log(_id, "<<<Ini IDDD"); 
+
       const agg = [
         {
           $match: {
