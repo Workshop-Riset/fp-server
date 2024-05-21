@@ -330,10 +330,42 @@ class MissionController {
     try {
       const { idMission } = req.params;
       const detailMission = await searchTemplateMission(idMission);
+      const missionCollection = await (await dbMission()).aggregate([
+        {
+          '$match': {
+            '_id': new ObjectId('664777498cb91b5b82b9c720')
+          }
+        }, {
+          '$lookup': {
+            'from': 'Missions', 
+            'localField': '_id', 
+            'foreignField': 'missionId', 
+            'as': 'DetailMission'
+          }
+        }, {
+          '$project': {
+            '_id': 1, 
+            'name': 1, 
+            'description': 1, 
+            'point': 1, 
+            'location': 1, 
+            'thumbnail': 1, 
+            'type': 1, 
+            'city': 1, 
+            'category': 1, 
+            'pointMin': 1, 
+            'DetailMission._id': 1, 
+            'DetailMission.status': 1, 
+            'DetailMission.missionId': 1, 
+            'DetailMission.userId': 1, 
+            'DetailMission.vote': 1
+          }
+        }
+      ]).toArray()
       if (!detailMission) {
-        return res.status(404).json({ message: "Mission cant found" });
+        return res.status(404).json({ message: "Mission not found" });
       }
-      res.status(200).json(detailMission);
+      res.status(200).json(missionCollection);
     } catch (error) {
       next(error);
     }
