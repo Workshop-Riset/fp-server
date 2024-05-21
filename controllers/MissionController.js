@@ -180,6 +180,11 @@ class MissionController {
             path: "$Missions",
           },
         },
+        {
+          $match: {
+            "Missions.type": "Self",
+          },
+        },
       ];
 
       const cursor = await missionCollection.aggregate(agg).toArray();
@@ -329,6 +334,31 @@ class MissionController {
         return res.status(404).json({ message: "Mission cant found" });
       }
       res.status(200).json(detailMission);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async socialMissionWithFilter(req, res, next) {
+    try {
+      const missionCollection = await dbMission();
+      const agg = [
+        {
+          $match: {
+            category: "social",
+          },
+        },
+        {
+          $lookup: {
+            from: "Missions",
+            localField: "_id",
+            foreignField: "missionId",
+            as: "DetailMission",
+          },
+        },
+      ];
+      const cursor = await missionCollection.aggregate(agg).toArray();
+      res.status(200).json(cursor);
     } catch (error) {
       next(error);
     }

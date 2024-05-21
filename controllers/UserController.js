@@ -201,7 +201,7 @@ class UserController {
             category: {
               $first: "$category",
             },
-            onGoingMissions: {
+            onGoingMissions: { //self -> finished, onGoing
               $push: {
                 $cond: {
                   if: {
@@ -212,7 +212,7 @@ class UserController {
                 },
               },
             },
-            finishedMissions: {
+            finishedMissions: { //social -> 
               $push: {
                 $cond: {
                   if: {
