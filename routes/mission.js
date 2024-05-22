@@ -11,6 +11,9 @@ routes.get("/", MissionController.getMission);
 routes.post("/assign", MissionController.assignMission);
 
 routes.get("/my-mission", authorization, MissionController.MissionDetail);
+
+routes.get("/filterPending", MissionController.missionFilter)
+
 routes.post(
   "/:missionId",
   authorization,
@@ -24,4 +27,5 @@ routes.patch(
   MissionController.acceptMissionByAdmin
 );
 routes.get("/:idMission", MissionController.detailMission);
+routes.get("/admin/:_id", MissionController.getIdMissionAdmin)
 module.exports = routes;
