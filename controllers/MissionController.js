@@ -333,6 +333,7 @@ class MissionController {
     try {
       const { idMission } = req.params;
       const detailMission = await searchTemplateMission(idMission);
+      const { _id } = req.user;
       const missionCollection = await (
         await dbMission()
       )
@@ -362,11 +363,18 @@ class MissionController {
               city: 1,
               category: 1,
               pointMin: 1,
-              "DetailMission._id": 1,
-              "DetailMission.status": 1,
-              "DetailMission.missionId": 1,
-              "DetailMission.userId": 1,
-              "DetailMission.vote": 1,
+              // "DetailMission._id": 1,
+              // "DetailMission.status": 1,
+              // "DetailMission.missionId": 1,
+              // "DetailMission.userId": 1,
+              // "DetailMission.vote": 1,
+              DetailMission: {
+                $filter: {
+                  input: "$DetailMission",
+                  as: "detail",
+                  cond: { $eq: ["$$detail.userId", new ObjectId(_id)] },
+                },
+              },
             },
           },
         ])
@@ -431,7 +439,7 @@ class MissionController {
   static async getIdMissionAdmin(req, res, next) {
     try {
       const { _id } = req.params;
-      console.log(_id, '<<<< id masuk');
+      console.log(_id, "<<<< id masuk");
       const agg = [
         {
           $match: {

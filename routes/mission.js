@@ -12,7 +12,7 @@ routes.post("/assign", MissionController.assignMission);
 
 routes.get("/my-mission", authorization, MissionController.MissionDetail);
 
-routes.get("/filterPending", MissionController.missionFilter)
+routes.get("/filterPending", MissionController.missionFilter);
 
 routes.post(
   "/:missionId",
@@ -26,6 +26,6 @@ routes.patch(
   onlyAdmin,
   MissionController.acceptMissionByAdmin
 );
-routes.get("/:idMission", MissionController.detailMission);
-routes.get("/admin/:_id", MissionController.getIdMissionAdmin)
+routes.get("/admin/:_id", MissionController.getIdMissionAdmin);
+routes.get("/:idMission", authorization, MissionController.detailMission);
 module.exports = routes;
