@@ -137,7 +137,7 @@ class UserController {
   static async myProfile(req, res, next) {
     try {
       const { _id } = req.user;
-      console.log(_id, '<<< id');
+      console.log(_id, "<<< id");
       const userCollection = await dbUser();
       const agg = [
         {
@@ -201,7 +201,8 @@ class UserController {
             category: {
               $first: "$category",
             },
-            onGoingMissions: { //self -> finished, onGoing
+            onGoingMissions: {
+              //self -> finished, onGoing
               $push: {
                 $cond: {
                   if: {
@@ -212,7 +213,8 @@ class UserController {
                 },
               },
             },
-            finishedMissions: { //social -> 
+            finishedMissions: {
+              //social ->
               $push: {
                 $cond: {
                   if: {

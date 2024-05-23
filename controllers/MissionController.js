@@ -34,6 +34,29 @@ class MissionController {
       next(error);
     }
   }
+  static async socialMissionDetail(req, res, next) {
+    try {
+      const { missionId } = req.params;
+      const missionCollection = await dbMission();
+
+      if (!ObjectId.isValid(missionId)) {
+        return res.status(400).json({ message: "Invalid mission ID format" });
+      }
+
+      const mission = await missionCollection.findOne({
+        _id: new ObjectId(missionId),
+        type: "Social",
+      });
+
+      if (!mission) {
+        return res.status(404).json({ message: "Mission not found" });
+      }
+
+      res.status(200).json(mission);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async assignMission(req, res, next) {
     //PR:
@@ -155,8 +178,6 @@ class MissionController {
     try {
       const { _id } = req.user;
       const missionCollection = await dbUser();
-
-      console.log(_id, "<<<Ini IDDD");
 
       const agg = [
         {
