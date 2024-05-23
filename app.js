@@ -16,8 +16,8 @@ app.get("/", async (req, res) => {
 
 app.use(errHandler);
 
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
 
-module.exports = app
+module.exports = app;
