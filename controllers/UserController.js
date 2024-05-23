@@ -125,7 +125,9 @@ class UserController {
         _id: new ObjectId(finderUsername._id),
         username: finderUsername.username,
         role: finderUsername.role,
+        photo: finderUsername.photo
       };
+      console.log(payload, "< === payload")
       const access_token = signToken(payload);
       res.status(200).json({ access_token, role: finderUsername.role });
     } catch (error) {
@@ -452,46 +454,46 @@ class UserController {
     }
   }
 
-//   static async updatePhotoProfile(req, res, next) {
-//     try {
-//       const { _id } = req.user;
-//       const userCollection = await dbUser();
-//       const base64Convert = req.file.buffer.toString("base64");
-//       const base64Url = `data:${req.file.mimetype};base64,${base64Convert}`;
-//       const cloudinaryRespone = await cloudinary.uploader.upload(base64Url);
-//       const filter = { _id: new ObjectId(_id) };
-//       const updateOperation = {
-//         $set: { photo: cloudinaryRespone.secure_url },
-//       };
-//       const updateImg = await userCollection.updateOne(filter, updateOperation);
-//       res.status(200).json({ message: "Update image successfully" });
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
+  //   static async updatePhotoProfile(req, res, next) {
+  //     try {
+  //       const { _id } = req.user;
+  //       const userCollection = await dbUser();
+  //       const base64Convert = req.file.buffer.toString("base64");
+  //       const base64Url = `data:${req.file.mimetype};base64,${base64Convert}`;
+  //       const cloudinaryRespone = await cloudinary.uploader.upload(base64Url);
+  //       const filter = { _id: new ObjectId(_id) };
+  //       const updateOperation = {
+  //         $set: { photo: cloudinaryRespone.secure_url },
+  //       };
+  //       const updateImg = await userCollection.updateOne(filter, updateOperation);
+  //       res.status(200).json({ message: "Update image successfully" });
+  //     } catch (error) {
+  //       next(error);
+  //     }
+  //   }
 
-//   static async updateThumbnail(req, res, next) {
-//     try {
-//       const { _id } = req.user;
+  //   static async updateThumbnail(req, res, next) {
+  //     try {
+  //       const { _id } = req.user;
 
-//       const userCollection = await dbUser();
-//       const base64Convert = req.file.buffer.toString("base64");
-//       const base64Url = `data:${req.file.mimetype};base64,${base64Convert}`;
-//       const cloudinaryRespone = await cloudinary.uploader.upload(base64Url);
-//       const filter = { _id: new ObjectId(_id) };
-//       const updateOperation = {
-//         $set: { thumbnail: cloudinaryRespone.secure_url },
-//       };
-//       const updateThumbnail = await userCollection.updateOne(
-//         filter,
-//         updateOperation
-//       );
-//       res.status(200).json({ message: "Update thubmnail successfully" });
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// }
+  //       const userCollection = await dbUser();
+  //       const base64Convert = req.file.buffer.toString("base64");
+  //       const base64Url = `data:${req.file.mimetype};base64,${base64Convert}`;
+  //       const cloudinaryRespone = await cloudinary.uploader.upload(base64Url);
+  //       const filter = { _id: new ObjectId(_id) };
+  //       const updateOperation = {
+  //         $set: { thumbnail: cloudinaryRespone.secure_url },
+  //       };
+  //       const updateThumbnail = await userCollection.updateOne(
+  //         filter,
+  //         updateOperation
+  //       );
+  //       res.status(200).json({ message: "Update thubmnail successfully" });
+  //     } catch (error) {
+  //       next(error);
+  //     }
+  //   }
+  // }
 }
 
 module.exports = UserController;

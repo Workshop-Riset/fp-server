@@ -156,7 +156,7 @@ class MissionController {
       const { _id } = req.user;
       const missionCollection = await dbUser();
 
-      console.log(_id, "<<<Ini IDDD"); 
+      console.log(_id, "<<<Ini IDDD");
 
       const agg = [
         {
@@ -270,7 +270,7 @@ class MissionController {
   static async pushSocialMission(req, res, next) {
     try {
       const { missionId } = req.params;
-      const { _id, username } = req.user;
+      const { _id, username, photo } = req.user;
       const missionTemplate = await dbMission();
       const mission = await dbUser();
       const searchMission = await searchTemplateMission(missionId);
@@ -300,6 +300,7 @@ class MissionController {
       const insert = {
         userId: new ObjectId(_id),
         username,
+        photo
       };
 
       const filter = { _id: new ObjectId(missionId) };
@@ -338,7 +339,7 @@ class MissionController {
         .aggregate([
           {
             $match: {
-              _id: new ObjectId("664777498cb91b5b82b9c720"),
+              _id: new ObjectId(idMission),
             },
           },
           {
@@ -385,19 +386,12 @@ class MissionController {
       const agg = [
         {
           $match: {
-            category: "social",
+            type: "Social",
           },
-        },
-        {
-          $lookup: {
-            from: "Missions",
-            localField: "_id",
-            foreignField: "missionId",
-            as: "DetailMission",
-          },
-        },
+        }
       ];
       const cursor = await missionCollection.aggregate(agg).toArray();
+      console.log(cursor, "< +++++ Cursor")
       res.status(200).json(cursor);
     } catch (error) {
       next(error);
