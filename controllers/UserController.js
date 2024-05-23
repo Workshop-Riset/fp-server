@@ -42,8 +42,7 @@ class UserController {
 
   static async register(req, res, next) {
     try {
-      const { name, email, phoneNumber, username, password, category } =
-        req.body;
+      const { name, email, phoneNumber, username, password, category } = req.body;
       const inputData = {
         name,
         email,
@@ -56,13 +55,7 @@ class UserController {
         location: "Surabaya",
         category,
       };
-      // console.log(phoneNumber, '<<<<');
-      // if (typeof phoneNumber === "string") {
-      //   throw { name: "BadInput" };
-      // }
-      if (!validateEmail(email)) {
-        throw { name: "EmailFormat" };
-      }
+
       if (!name) {
         throw { name: "RequiredInput", type: "Name" };
       }
@@ -75,19 +68,23 @@ class UserController {
       if (password.length < 6) {
         throw { name: "PasswordLength" };
       }
+      if (!validateEmail(email)) {
+        throw { name: "EmailFormat" };
+      }
+      
       const userCollection = await dbUser();
-      const findUsername = await userCollection.findOne({ username });
-      if (findUsername) {
-        throw { name: "UniqueInput", type: "Username" };
-      }
-      const findEmail = await userCollection.findOne({ email });
-      if (findEmail) {
-        throw { name: "UniqueInput", type: "Email" };
-      }
+      
+      const existingUsername = await userCollection.findOne({ username });
+      if (existingUsername) throw { name: "UniqueInput", message: "Username is already taken" };
+      
+      const existingEmail = await userCollection.findOne({ email });
+      if (existingEmail) throw { name: "UniqueInput", message: "Email is already registered" };
+      
+
       const insertNewUser = await userCollection.insertOne(inputData);
 
       res.status(201).json({
-        message: "Registasion Successfully",
+        message: "Registration Successfully",
         data: {
           name: inputData.name,
           email: inputData.email,
@@ -100,6 +97,7 @@ class UserController {
         },
       });
     } catch (error) {
+      console.log(error,'>>'); // Tambahkan log untuk melihat error detail
       next(error);
     }
   }
