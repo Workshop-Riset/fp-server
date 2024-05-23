@@ -156,7 +156,7 @@ class MissionController {
       const { _id } = req.user;
       const missionCollection = await dbUser();
 
-      console.log(_id, "<<<Ini IDDD");
+      console.log(_id, "<<<Ini IDDD"); 
 
       const agg = [
         {
@@ -332,38 +332,44 @@ class MissionController {
     try {
       const { idMission } = req.params;
       const detailMission = await searchTemplateMission(idMission);
-      const missionCollection = await (await dbMission()).aggregate([
-        {
-          '$match': {
-            '_id': new ObjectId(idMission)
-          }
-        }, {
-          '$lookup': {
-            'from': 'Missions',
-            'localField': '_id',
-            'foreignField': 'missionId',
-            'as': 'DetailMission'
-          }
-        }, {
-          '$project': {
-            '_id': 1,
-            'name': 1,
-            'description': 1,
-            'point': 1,
-            'location': 1,
-            'thumbnail': 1,
-            'type': 1,
-            'city': 1,
-            'category': 1,
-            'pointMin': 1,
-            'DetailMission._id': 1,
-            'DetailMission.status': 1,
-            'DetailMission.missionId': 1,
-            'DetailMission.userId': 1,
-            'DetailMission.vote': 1
-          }
-        }
-      ]).toArray()
+      const missionCollection = await (
+        await dbMission()
+      )
+        .aggregate([
+          {
+            $match: {
+              _id: new ObjectId("664777498cb91b5b82b9c720"),
+            },
+          },
+          {
+            $lookup: {
+              from: "Missions",
+              localField: "_id",
+              foreignField: "missionId",
+              as: "DetailMission",
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              description: 1,
+              point: 1,
+              location: 1,
+              thumbnail: 1,
+              type: 1,
+              city: 1,
+              category: 1,
+              pointMin: 1,
+              "DetailMission._id": 1,
+              "DetailMission.status": 1,
+              "DetailMission.missionId": 1,
+              "DetailMission.userId": 1,
+              "DetailMission.vote": 1,
+            },
+          },
+        ])
+        .toArray();
       if (!detailMission) {
         return res.status(404).json({ message: "Mission not found" });
       }
@@ -393,6 +399,90 @@ class MissionController {
       ];
       const cursor = await missionCollection.aggregate(agg).toArray();
       res.status(200).json(cursor);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async missionFilter(req, res, next) {
+    try {
+      const agg = [
+        {
+          $match: {
+            status: "pending",
+          },
+        },
+        {
+          $lookup: {
+            from: "Missions-Template",
+            localField: "missionId",
+            foreignField: "_id",
+            as: "DetailMissions",
+          },
+        },
+        {
+          $unwind: {
+            path: "$DetailMissions",
+          },
+        },
+      ];
+      const cursor = await (await dbUser()).aggregate(agg).toArray();
+      console.log(cursor, "<<<");
+      res.status(200).json(cursor);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getIdMissionAdmin(req, res, next) {
+    try {
+      const { _id } = req.params;
+      console.log(_id, '<<<< id masuk');
+      const agg = [
+        {
+          $match: {
+            _id: new ObjectId(_id),
+          },
+        },
+        {
+          $match: {
+            status: "pending",
+          },
+        },
+        {
+          $lookup: {
+            from: "Missions-Template",
+            localField: "missionId",
+            foreignField: "_id",
+            as: "DetailMissions",
+          },
+        },
+        {
+          $unwind: {
+            path: "$DetailMissions",
+          },
+        },
+        {
+          $lookup: {
+            from: "Users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "Players",
+          },
+        },
+        {
+          $unwind: {
+            path: "$Players",
+          },
+        },
+      ];
+      const missionCollection = await dbUser();
+      const cursor = await missionCollection.aggregate(agg).toArray();
+      // console.log(cursor);
+      if (!cursor) {
+        return res.status(404).json({ message: "Cannot find id mission" });
+      }
+      return res.status(200).json(cursor);
     } catch (error) {
       next(error);
     }
