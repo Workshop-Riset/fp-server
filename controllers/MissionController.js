@@ -156,7 +156,7 @@ class MissionController {
       const { _id } = req.user;
       const missionCollection = await dbUser();
 
-      console.log(_id, "<<<Ini IDDD"); 
+      console.log(_id, "<<<Ini IDDD");
 
       const agg = [
         {
@@ -335,31 +335,31 @@ class MissionController {
       const missionCollection = await (await dbMission()).aggregate([
         {
           '$match': {
-            '_id': new ObjectId('664777498cb91b5b82b9c720')
+            '_id': new ObjectId(idMission)
           }
         }, {
           '$lookup': {
-            'from': 'Missions', 
-            'localField': '_id', 
-            'foreignField': 'missionId', 
+            'from': 'Missions',
+            'localField': '_id',
+            'foreignField': 'missionId',
             'as': 'DetailMission'
           }
         }, {
           '$project': {
-            '_id': 1, 
-            'name': 1, 
-            'description': 1, 
-            'point': 1, 
-            'location': 1, 
-            'thumbnail': 1, 
-            'type': 1, 
-            'city': 1, 
-            'category': 1, 
-            'pointMin': 1, 
-            'DetailMission._id': 1, 
-            'DetailMission.status': 1, 
-            'DetailMission.missionId': 1, 
-            'DetailMission.userId': 1, 
+            '_id': 1,
+            'name': 1,
+            'description': 1,
+            'point': 1,
+            'location': 1,
+            'thumbnail': 1,
+            'type': 1,
+            'city': 1,
+            'category': 1,
+            'pointMin': 1,
+            'DetailMission._id': 1,
+            'DetailMission.status': 1,
+            'DetailMission.missionId': 1,
+            'DetailMission.userId': 1,
             'DetailMission.vote': 1
           }
         }

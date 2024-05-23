@@ -12,6 +12,7 @@ async function findUsername(username) {
 }
 
 async function findIdUser(_id) {
+  console.log(_id, "< === id brooo")
   const userCollection = await dbUser();
   const findId = await userCollection.findOne({ _id: new ObjectId(_id) });
   return findId;

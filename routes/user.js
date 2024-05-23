@@ -9,19 +9,31 @@ routes.get("/", UserController.getUser);
 routes.post("/register", UserController.register);
 routes.post("/login", UserController.login);
 routes.get("/my-profile", authorization, UserController.myProfile);
-routes.patch("/description", authorization, UserController.updateDescription);
+// routes.patch("/description", authorization, UserController.updateDescription);
+// routes.patch(
+//   "/my-profile",
+//   authorization,
+//   upload.single("image"),
+//   UserController.updatePhotoProfile
+// );
+// routes.patch(
+//     "/my-thumbnail",
+//     authorization,
+//     upload.single("image"),
+//     UserController.updateThumbnail
+// )
+
 routes.patch(
-  "/my-profile",
+  "/update-profile",
   authorization,
-  upload.single("image"),
-  UserController.updatePhotoProfile
+  upload.fields([
+    { name: 'photo', maxCount: 1 },
+    { name: 'thumbnail', maxCount: 1 }
+  ]),
+  UserController.updateProfile
 );
-routes.patch(
-    "/my-thumbnail",
-    authorization,
-    upload.single("image"),
-    UserController.updateThumbnail
-)
+
+
 routes.get("/:userId", UserController.informationUserOther);
 
 module.exports = routes;

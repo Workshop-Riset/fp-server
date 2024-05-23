@@ -351,28 +351,76 @@ class UserController {
     }
   }
 
-  static async updateDescription(req, res, next) {
+  // static async updateDescription(req, res, next) {
+  //   try {
+  //     const { _id } = req.user;
+  //     const { description } = req.body;
+  //     if (!description) {
+  //       throw { name: "RequiredInput", type: "Description" };
+  //     }
+  //     const userCollection = await dbUser();
+  //     const filter = { _id: new ObjectId(_id) };
+  //     const updateOperation = {
+  //       $set: { description: description },
+  //     };
+  //     const updateDescription = await userCollection.updateOne(
+  //       filter,
+  //       updateOperation
+  //     );
+
+  //     res.status(200).json({ message: "Description updated successfully" });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
+  static async updateProfile(req, res, next) {
     try {
       const { _id } = req.user;
+      console.log(_id, "< === id user")
       const { description } = req.body;
-      if (!description) {
-        throw { name: "RequiredInput", type: "Description" };
-      }
       const userCollection = await dbUser();
       const filter = { _id: new ObjectId(_id) };
-      const updateOperation = {
-        $set: { description: description },
-      };
-      const updateDescription = await userCollection.updateOne(
-        filter,
-        updateOperation
-      );
+      const updateOperation = {};
 
-      res.status(200).json({ message: "Description updated successfully" });
+      console.log({ description })
+      if (!description) {
+        throw { name: "RequiredInput", type: "Description" };
+      } else {
+        updateOperation.description = description;
+      }
+
+      // Update photo if file is provided
+      if (req.files && req.files.photo) {
+        console.log({ file: req.files, photo: req.files.photo }, "< nih brooo")
+        const base64Convert = req.files.photo[0].buffer.toString("base64");
+        const base64Url = `data:${req.files.photo[0].mimetype};base64,${base64Convert}`;
+        const cloudinaryResponse = await cloudinary.uploader.upload(base64Url);
+        updateOperation.photo = cloudinaryResponse.secure_url;
+      }
+
+      // Update thumbnail if file is provided
+      if (req.files && req.files.thumbnail) {
+        const base64Convert = req.files.thumbnail[0].buffer.toString("base64");
+        const base64Url = `data:${req.files.thumbnail[0].mimetype};base64,${base64Convert}`;
+        const cloudinaryResponse = await cloudinary.uploader.upload(base64Url);
+        updateOperation.thumbnail = cloudinaryResponse.secure_url;
+      }
+
+      if (Object.keys(updateOperation).length === 0) {
+        throw { name: "RequiredInput", type: "NoValidDataProvided" };
+      }
+
+      const updateProfile = await userCollection.updateOne(filter, { $set: updateOperation });
+
+      console.log(updateProfile, "< === result")
+
+      res.status(200).json({ message: "Profile updated successfully" });
     } catch (error) {
       next(error);
     }
   }
+
 
   static async informationUserOther(req, res, next) {
     try {
@@ -404,45 +452,46 @@ class UserController {
     }
   }
 
-  static async updatePhotoProfile(req, res, next) {
-    try {
-      const { _id } = req.user;
-      const userCollection = await dbUser();
-      const base64Convert = req.file.buffer.toString("base64");
-      const base64Url = `data:${req.file.mimetype};base64,${base64Convert}`;
-      const cloudinaryRespone = await cloudinary.uploader.upload(base64Url);
-      const filter = { _id: new ObjectId(_id) };
-      const updateOperation = {
-        $set: { photo: cloudinaryRespone.secure_url },
-      };
-      const updateImg = await userCollection.updateOne(filter, updateOperation);
-      res.status(200).json({ message: "Update image successfully" });
-    } catch (error) {
-      next(error);
-    }
-  }
+//   static async updatePhotoProfile(req, res, next) {
+//     try {
+//       const { _id } = req.user;
+//       const userCollection = await dbUser();
+//       const base64Convert = req.file.buffer.toString("base64");
+//       const base64Url = `data:${req.file.mimetype};base64,${base64Convert}`;
+//       const cloudinaryRespone = await cloudinary.uploader.upload(base64Url);
+//       const filter = { _id: new ObjectId(_id) };
+//       const updateOperation = {
+//         $set: { photo: cloudinaryRespone.secure_url },
+//       };
+//       const updateImg = await userCollection.updateOne(filter, updateOperation);
+//       res.status(200).json({ message: "Update image successfully" });
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
 
-  static async updateThumbnail(req, res, next) {
-    try {
-      const { _id } = req.user;
+//   static async updateThumbnail(req, res, next) {
+//     try {
+//       const { _id } = req.user;
 
-      const userCollection = await dbUser();
-      const base64Convert = req.file.buffer.toString("base64");
-      const base64Url = `data:${req.file.mimetype};base64,${base64Convert}`;
-      const cloudinaryRespone = await cloudinary.uploader.upload(base64Url);
-      const filter = { _id: new ObjectId(_id) };
-      const updateOperation = {
-        $set: { thumbnail: cloudinaryRespone.secure_url },
-      };
-      const updateThumbnail = await userCollection.updateOne(
-        filter,
-        updateOperation
-      );
-      res.status(200).json({ message: "Update thubmnail successfully" });
-    } catch (error) {
-      next(error);
-    }
-  }
+//       const userCollection = await dbUser();
+//       const base64Convert = req.file.buffer.toString("base64");
+//       const base64Url = `data:${req.file.mimetype};base64,${base64Convert}`;
+//       const cloudinaryRespone = await cloudinary.uploader.upload(base64Url);
+//       const filter = { _id: new ObjectId(_id) };
+//       const updateOperation = {
+//         $set: { thumbnail: cloudinaryRespone.secure_url },
+//       };
+//       const updateThumbnail = await userCollection.updateOne(
+//         filter,
+//         updateOperation
+//       );
+//       res.status(200).json({ message: "Update thubmnail successfully" });
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
+// }
 }
 
 module.exports = UserController;
